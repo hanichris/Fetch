@@ -4,10 +4,7 @@
 
 {% block content %}
 <button type="button" id="button">Click me</button>
-{% if error %}
-<p>The post queried already exits in the database </p>
-{{ error }}
-{% endif %}
+<p id="error"></p>
 
 <script>
 let csrftoken = getCookie('csrftoken');
@@ -26,8 +23,17 @@ button.addEventListener('click', async (ev) => {
             "X-CSRFToken": csrftoken,
         },
     });
-    if (resp.redirected){
-        window.location.replace(resp.url); 
+    try {
+        const json = await resp.json();
+        if (json['dataError']) {
+            const p = document.getElementById("error")
+            p.style.color = "red"
+            p.innerHTML = `The queried entry with id = ${json['id']} already exists in the database.`
+        }
+    } catch (error) {
+        if (resp.redirected){
+            window.location.replace(resp.url); 
+        }
     }
 
 })
