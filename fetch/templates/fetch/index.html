@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{%block title%}Index page{% endblock title %}
+
+{% block content %}
+<button type="button" id="button">Click me</button>
+{% if error %}
+<p>The post queried already exits in the database </p>
+{{ error }}
+{% endif %}
+
+<script>
+let csrftoken = getCookie('csrftoken');
+const button = document.getElementById('button')
+button.addEventListener('click', async (ev) => {
+    const rndInt = Math.floor(Math.random() * 100) + 1
+    const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${rndInt}`);
+    let data = await res.json();
+    console.log(data)
+    const resp = await fetch('/', {
+        method: "POST",
+        redirect: "follow",
+        credentials: 'same-origin',
+        body: JSON.stringify(data),
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            "X-CSRFToken": csrftoken,
+        },
+    });
+    if (resp.redirected){
+        window.location.replace(resp.url); 
+    }
+
+})
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock content %}
