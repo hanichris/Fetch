@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, render
 from django.http.request import HttpRequest
-from django.http.response import HttpResponseRedirect, HttpResponse
+from django.http.response import HttpResponseRedirect, JsonResponse
 from django.db.utils import IntegrityError
 
 from .models import Posts
@@ -16,8 +16,9 @@ def index(request: HttpRequest):
         try:
             Posts.objects.create(**data)
         except IntegrityError:
-            return render(request, 'fetch/index.html', {
-                "error": "Already created"
+            return JsonResponse({
+                'dataError': True,
+                'id': data.get('id'),
             })
     return HttpResponseRedirect('success')
 
