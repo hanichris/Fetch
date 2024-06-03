@@ -13,18 +13,12 @@ def index(request: HttpRequest):
     if request.method == "POST":
         import json
         data = json.loads(request.body.decode("utf-8"))
-        value = get_object_or_404(Posts, pk=data["id"])
-        print(f"{value = }")
-        if value is not None:
-            return render(request, "fetch/index.html", {'error': True})
-        Posts.objects.create(**data)
-        return HttpResponseRedirect("success")
-        # try:
-        #     Posts.objects.create(**data)
-        # except IntegrityError:
-        #     return render(request, 'fetch/index.html', {
-        #         "error": "Already created"
-        #     })
+        try:
+            Posts.objects.create(**data)
+        except IntegrityError:
+            return render(request, 'fetch/index.html', {
+                "error": "Already created"
+            })
     return HttpResponseRedirect('success')
 
 

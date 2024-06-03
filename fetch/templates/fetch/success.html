@@ -10,14 +10,12 @@
             <th>ID</th>
             <th>Title</td>
             <th>Body</th>
-            <th>Completed</th>
         </thead>
     {% for post in posts %}
         <tr>
             <td>{{ post.id }}</td>
             <td>{{ post.title }}</td>
             <td>{{ post.body }}</td>
-            <td>{{ post.completed }}</td>
         </tr>    
     {% endfor %}
     </table>
